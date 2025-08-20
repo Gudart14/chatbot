@@ -100,6 +100,16 @@ const FAQ = [
     answer: "El *síndrome de intestino irritable (SII)* causa dolor crónico y cambios intestinales.\nMejora con dieta baja en FODMAP, manejo del estrés, fibra soluble y supervisión médica." }
 ];
 
+/*************** Small talk (respuestas sociales) ***************/
+const SMALLTALK = [
+  { patterns: ["hola","buenas","hey","holi","qué tal"],
+    answers: ["¡Hola! ¿Cómo estás? 😊", "¡Hey! Bienvenido 👋", "¡Hola! ¿Tienes alguna molestia gastrointestinal de la que quieras hablar?"] },
+  { patterns: ["gracias","muchas gracias","te lo agradezco"],
+    answers: ["¡De nada! ✨", "Con gusto, estoy para orientarte 🤗", "¡Un placer ayudarte!"] },
+  { patterns: ["adiós","bye","nos vemos","hasta luego","chao"],
+    answers: ["¡Hasta luego! Cuida tu salud 🙌", "Nos vemos pronto 👋", "Adiós, recuerda mantener una dieta balanceada 🍎"] }
+];
+
 const SUGGESTIONS = [
   "Tengo diarrea, ¿qué puedo tomar?",
   "¿Cómo calmar la acidez por la noche?",
@@ -138,6 +148,19 @@ function bestFAQ(text){
   return null;
 }
 
+function bestSmalltalk(text){
+  const t = normalize(text);
+  for(const group of SMALLTALK){
+    for(const p of group.patterns){
+      if(t.includes(normalize(p))){
+        // devolver una respuesta aleatoria para más naturalidad
+        return group.answers[Math.floor(Math.random()*group.answers.length)];
+      }
+    }
+  }
+  return null;
+}
+
 function handleSend(text){
   if(!text.trim()) return;
   inputEl.value = '';
@@ -148,11 +171,11 @@ function handleSend(text){
 
   setTimeout(() => {
     botBubble.classList.remove('dots');
-    let reply = bestFAQ(text);
+    let reply = bestSmalltalk(text) || bestFAQ(text);
     if(reply){
       botBubble.textContent = reply;
     } else {
-      botBubble.textContent = "Lo siento, no entiendo lo que dices pero puedo atender problemas como gastritis, diarrea, reflujo, estreñimiento, colon irritable, entre otros.";
+      botBubble.textContent = "Lo siento, no entendí 🤔. Puedo orientarte en temas como gastritis, diarrea, reflujo, estreñimiento o colon irritable.";
     }
   }, 1200);
 }
@@ -175,7 +198,7 @@ SUGGESTIONS.forEach(txt => {
 });
 
 // Mensaje inicial
-addMessage('bot', "¡Hola! Soy **GI Salud**. Puedo orientarte sobre síntomas comunes, autocuidado y señales de alarma en problemas gastrointestinales.");
+addMessage('bot', "👋 ¡Hola! Soy **GI Salud**. Puedo orientarte sobre síntomas comunes, autocuidado y señales de alarma en problemas gastrointestinales.");
 </script>
 </body>
 </html>
